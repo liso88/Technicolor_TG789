@@ -68,7 +68,7 @@ mtd erase bank_1
 
 controllare che `cat /proc/banktable/booted` restituisca **bank_2**
 
-##4. Aggiungi rete guest + correzione bug + lingua italiano (vedi https://www.ilpuntotecnico.com/forum/index.php/topic,77981.msg238343.html#msg238343 )
+## 4. Aggiungi rete guest + correzione bug + lingua italiano (vedi https://www.ilpuntotecnico.com/forum/index.php/topic,77981.msg238343.html#msg238343 )
  (E' incluso il bug fix per i toni italiani del VOIP da installare preferibilmente prima della GUI MOD)
 
 Si tratta di un eseguibile editabile secondo le proprie preferenze che permette di :
@@ -83,3 +83,14 @@ Si tratta di un eseguibile editabile secondo le proprie preferenze che permette 
 Scaricare lo zip allegato e scompattatelo su supporto usb. Editate i file come indicato nel  Readme allegato. Inserite il supporto usb nel router. Entrate con SSH come root e date questo comando:
 sh /tmp/run/mountd/sda1/setup/setup.sh
 La procedura e reversibile sempre seguendo le indicazione del Readme allegato.
+
+
+Con la pennina  usb inserita (NB copiare la cartella setup nella root)
+
+### ABILITA GUEST WIFI
+cp /etc/config/wireless /etc/config/wireless.save & cp /tmp/run/mountd/sda1/setup/wifi/wireless /etc/config/wireless
+
+### PERMETTE LA VISUALIZZAZIONE DELLO STATO DEL WIFI GUEST NELLA GUI - FACOLTATICO
+
+cp /www/cards/004_wireless.lp /www/cards/004_wireless.lp.save & cp /tmp/run/mountd/sda1/setup/wifi/004_wireless.lp /www/cards/ & /etc/init.d/nginx restart
+
