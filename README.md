@@ -52,3 +52,34 @@ Proseguire al punto 18, altrimenti il modem non supporta il dual bank
 
 Se tutto è andato bene, il modem si arresterà intenzionalmente in modo anomalo. Attendi il riavvio completo.
 Ora dovresti essere nel bank ottimale menzionato in precedenza. A ogni riavvio, il dispositivo tenterà di avviare prima il banco attivo. Poiché abbiamo impostato il banco 1 come attivo e abbiamo anche cancellato il firmware del banco 1, si avvierà dal banco 2.
+
+
+## 3 .Verifiche
+
+ 1.  accedere in SSH con credenziali quelle di default dopo il root, ovvero nome utente: root e password: root
+ 2. se il comando `cat /proc/banktable/booted` restituisce **bank_1** eseguire il comando `[ "$(cat /proc/banktable/booted)" = "bank_1" ] && mtd write /dev/mtd3 bank_2`
+ 3. eseguire 
+ `cp -a /overlay/$(cat /proc/banktable/booted) /tmp/bank_overlay_backup`
+ `rm -rf /overlay/*`
+ `cp -a /tmp/bank_overlay_backup /overlay/bank_2`
+echo bank_1 > /proc/banktable/active  
+sync  
+mtd erase bank_1
+
+controllare che `cat /proc/banktable/booted` restituisca **bank_2**
+
+##4. Aggiungi rete guest + correzione bug + lingua italiano (vedi https://www.ilpuntotecnico.com/forum/index.php/topic,77981.msg238343.html#msg238343 )
+ (E' incluso il bug fix per i toni italiani del VOIP da installare preferibilmente prima della GUI MOD)
+
+Si tratta di un eseguibile editabile secondo le proprie preferenze che permette di :
+
+- Aggiunge la lingua italiana alla GUI (i files della traduzione sono presi in prestito dalla GUI del “buon” e spero sempre eterno Ansuel).
+- Installa SFTP SERVER per l’uso di programmi tipo Filezilla o il File Manager del Desktop di Linux per navigare tra i files e cartelle del router.
+- Installa Nano come editor.
+- Configurazione del Wifi che risolve il problema della rete Guest.
+- Risolve lo stato della visualizzazione della rete Guest nella GUI.
+- Risolve i bugs del Voip  Tim e Tiscali (grazie a @cubamito).
+ 
+Scaricare lo zip allegato e scompattatelo su supporto usb. Editate i file come indicato nel  Readme allegato. Inserite il supporto usb nel router. Entrate con SSH come root e date questo comando:
+sh /tmp/run/mountd/sda1/setup/setup.sh
+La procedura e reversibile sempre seguendo le indicazione del Readme allegato.
