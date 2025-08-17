@@ -135,15 +135,15 @@ cp /www/cards/004_wireless.lp /www/cards/004_wireless.lp.save & cp /tmp/run/moun
 ```
 
 ### Modalità AP
-#### ABILITA GUEST WIFI
 
-Utilizzare il file  "wireless.apMode"
+#### Abilita Guest Wifi
+- Utilizzare il file  "AccessPoint_modality/wireless"
 
-#### PERMETTE LA VISUALIZZAZIONE DELLO STATO DEL WIFI GUEST NELLA GUI - FACOTATIVO
-ToDo
+#### Visualizzazione delle rete Guest nel pannello
+- ToDo. Attulamente non funziona
 
 
 ## 5. Consigli
 - installare il supporto per sftp server: `opkg install /tmp/run/mountd/sda1/setup/sftp/openssh-sftp-server_7.1p2-1_brcm63xx-tch.ipk `
-- Utilizzare FileZilla per spostare e rinominare il file "wireless.apMode" in "wireless"
+- Utilizzare FileZilla per spostare e rinominare i file
 
