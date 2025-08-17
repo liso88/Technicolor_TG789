@@ -130,7 +130,9 @@ Con la pennina  usb inserita (NB copiare la cartella setup nella root)
 
 #### PERMETTE LA VISUALIZZAZIONE DELLO STATO DEL WIFI GUEST NELLA GUI - FACOTATIVO
 
-`cp /www/cards/004_wireless.lp /www/cards/004_wireless.lp.save & cp /tmp/run/mountd/sda1/setup/wifi/004_wireless.lp /www/cards/ & /etc/init.d/nginx restart`
+```sh 
+cp /www/cards/004_wireless.lp /www/cards/004_wireless.lp.save & cp /tmp/run/mountd/sda1/setup/wifi/004_wireless.lp /www/cards/ & /etc/init.d/nginx restart
+```
 
 ### Modalità AP
 #### ABILITA GUEST WIFI
@@ -142,6 +144,6 @@ ToDo
 
 
 ## 5. Consigli
-- installare il supporto per sftp server: ```sh opkg install /tmp/run/mountd/sda1/setup/sftp/openssh-sftp-server_7.1p2-1_brcm63xx-tch.ipk ``
+- installare il supporto per sftp server: `opkg install /tmp/run/mountd/sda1/setup/sftp/openssh-sftp-server_7.1p2-1_brcm63xx-tch.ipk `
 - Utilizzare FileZilla per spostare e rinominare il file "wireless.apMode" in "wireless"
 
