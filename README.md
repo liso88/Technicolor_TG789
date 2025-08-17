@@ -24,13 +24,16 @@ Versione Firmware AGTOT >= 2.0
  2. Caricate uno dei due firmware (consigliato MST/UNO)  avviate l'aggiornamento al nuovo firmware ed     attendete che il gateway si riavvii
  3. Reset del modem
  4. Accedere al modem tramite *ssh* con utente: **engineer** e password: **ACCESS KEY**  
- 5. Eseguire il comando `set uci.button.button.@wps.handler "sed -i 's#/root:.*$#/root:/bin/ash#' /etc/passwd && echo root:root | chpasswd && sed -i -e 's/#//' -e 's#askconsole:.*\$#askconsole:/bin/ash#' /etc/inittab && (uci -q delete dropbear.afg || true) && uci add dropbear dropbear && uci rename dropbear.@dropbear[-1]=afg && uci set dropbear.afg.enable='1' && uci set dropbear.afg.Interface='lan' && uci set dropbear.afg.Port='22' && uci set dropbear.afg.IdleTimeout='600' && uci set dropbear.afg.PasswordAuth='on' && uci set dropbear.afg.RootPasswordAuth='on' && uci set dropbear.afg.RootLogin='1' && (uci set dropbear.lan.enable='0' || true) && uci commit dropbear && /etc/init.d/dropbear enable && /etc/init.d/dropbear restart && (uci -q set $(uci show firewall | grep -m 1 $(fw3 -q print | egrep 'iptables -t filter -A zone_lan_input -p tcp -m tcp --dport 22 -m comment --comment \"!fw3: .+\" -j DROP' | sed -n -e 's/^iptables.\+fw3: \(.\+\)\".\+/\1/p') | sed -n -e \"s/\(.\+\).name='.\+'$/\1/p\").target='ACCEPT' || true) && uci commit firewall && /etc/init.d/firewall reload && uci set button.wps.handler='wps_button_pressed.sh' && uci commit"`
- 6.  Premere il bottone WPS sul gateway per un secondo, rilasciarlo, ed attendere qualche istante che l'accesso root venga abilitato.   
- 7. Premere di nuovo WPS per controllare che si accendano i led WPS
- 8. Login alla shell via SSH all'IP del gateway con utente: root  password: root
- 9. Esegui: `sed -i -e 's/#//' -e 's#askconsole:.*$#askconsole:/bin/ash#' /etc/inittab`
- 10. Esegui `find /proc/banktable -type f -print -exec cat {} ';' -exec echo ';'`
- 11. Se vedi qualcosa tipo
+ 5. Eseguire il comando 
+   ```sh
+set uci.button.button.@wps.handler "sed -i 's#/root:.*$#/root:/bin/ash#' /etc/passwd && echo root:root | chpasswd && sed -i -e 's/#//' -e 's#askconsole:.*\$#askconsole:/bin/ash#' /etc/inittab && (uci -q delete dropbear.afg || true) && uci add dropbear dropbear && uci rename dropbear.@dropbear[-1]=afg && uci set dropbear.afg.enable='1' && uci set dropbear.afg.Interface='lan' && uci set dropbear.afg.Port='22' && uci set dropbear.afg.IdleTimeout='600' && uci set dropbear.afg.PasswordAuth='on' && uci set dropbear.afg.RootPasswordAuth='on' && uci set dropbear.afg.RootLogin='1' && (uci set dropbear.lan.enable='0' || true) && uci commit dropbear && /etc/init.d/dropbear enable && /etc/init.d/dropbear restart && (uci -q set $(uci show firewall | grep -m 1 $(fw3 -q print | egrep 'iptables -t filter -A zone_lan_input -p tcp -m tcp --dport 22 -m comment --comment \"!fw3: .+\" -j DROP' | sed -n -e 's/^iptables.\+fw3: \(.\+\)\".\+/\1/p') | sed -n -e \"s/\(.\+\).name='.\+'$/\1/p\").target='ACCEPT' || true) && uci commit firewall && /etc/init.d/firewall reload && uci set button.wps.handler='wps_button_pressed.sh' && uci commit"`
+```
+ 7.  Premere il bottone WPS sul gateway per un secondo, rilasciarlo, ed attendere qualche istante che l'accesso root venga abilitato.   
+ 8. Premere di nuovo WPS per controllare che si accendano i led WPS
+ 9. Login alla shell via SSH all'IP del gateway con utente: root  password: root
+ 10. Esegui: `sed -i -e 's/#//' -e 's#askconsole:.*$#askconsole:/bin/ash#' /etc/inittab`
+ 11. Esegui `find /proc/banktable -type f -print -exec cat {} ';' -exec echo ';'''
+ 12. Se vedi qualcosa tipo
 
     ...
     /proc/banktable/booted
