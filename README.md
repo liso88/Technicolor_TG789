@@ -20,17 +20,17 @@ Versione Firmware AGTOT >= 2.0
  6. Atendere il riavvio del modem
  
   ## 2 Nuovo Firmware
- 7. Rientrate nella webui del gateway, sempre su [http://192.168.1.1](http://192.0.0.168.1.1/), nome utente     `administrator` password `ACCESS_KEY` 
- 8. Caricate uno dei due firmware (consigliato MST/UNO)  avviate l'aggiornamento al nuovo firmware ed     attendete che il gateway si riavvii
- 9. Reset del modem
- 10. Accedere al modem tramite *ssh* con utente: **engineer** e password: **ACCESS KEY**  
- 11. Eseguire il comando `set uci.button.button.@wps.handler "sed -i 's#/root:.*$#/root:/bin/ash#' /etc/passwd && echo root:root | chpasswd && sed -i -e 's/#//' -e 's#askconsole:.*\$#askconsole:/bin/ash#' /etc/inittab && (uci -q delete dropbear.afg || true) && uci add dropbear dropbear && uci rename dropbear.@dropbear[-1]=afg && uci set dropbear.afg.enable='1' && uci set dropbear.afg.Interface='lan' && uci set dropbear.afg.Port='22' && uci set dropbear.afg.IdleTimeout='600' && uci set dropbear.afg.PasswordAuth='on' && uci set dropbear.afg.RootPasswordAuth='on' && uci set dropbear.afg.RootLogin='1' && (uci set dropbear.lan.enable='0' || true) && uci commit dropbear && /etc/init.d/dropbear enable && /etc/init.d/dropbear restart && (uci -q set $(uci show firewall | grep -m 1 $(fw3 -q print | egrep 'iptables -t filter -A zone_lan_input -p tcp -m tcp --dport 22 -m comment --comment \"!fw3: .+\" -j DROP' | sed -n -e 's/^iptables.\+fw3: \(.\+\)\".\+/\1/p') | sed -n -e \"s/\(.\+\).name='.\+'$/\1/p\").target='ACCEPT' || true) && uci commit firewall && /etc/init.d/firewall reload && uci set button.wps.handler='wps_button_pressed.sh' && uci commit"`
- 12.  Premere il bottone WPS sul gateway per un secondo, rilasciarlo, ed attendere qualche istante che l'accesso root venga abilitato.   
- 13. Premere di nuovo WPS per controllare che si accendano i led WPS
- 14. Login alla shell via SSH all'IP del gateway con utente: root  password: root
- 15. Esegui: `sed -i -e 's/#//' -e 's#askconsole:.*$#askconsole:/bin/ash#' /etc/inittab`
- 16. Esegui `find /proc/banktable -type f -print -exec cat {} ';' -exec echo ';'`
- 17. Se vedi qualcosa tipo
+ 1. Rientrate nella webui del gateway, sempre su [http://192.168.1.1](http://192.0.0.168.1.1/), nome utente     `administrator` password `ACCESS_KEY` 
+ 2. Caricate uno dei due firmware (consigliato MST/UNO)  avviate l'aggiornamento al nuovo firmware ed     attendete che il gateway si riavvii
+ 3. Reset del modem
+ 4. Accedere al modem tramite *ssh* con utente: **engineer** e password: **ACCESS KEY**  
+ 5. Eseguire il comando `set uci.button.button.@wps.handler "sed -i 's#/root:.*$#/root:/bin/ash#' /etc/passwd && echo root:root | chpasswd && sed -i -e 's/#//' -e 's#askconsole:.*\$#askconsole:/bin/ash#' /etc/inittab && (uci -q delete dropbear.afg || true) && uci add dropbear dropbear && uci rename dropbear.@dropbear[-1]=afg && uci set dropbear.afg.enable='1' && uci set dropbear.afg.Interface='lan' && uci set dropbear.afg.Port='22' && uci set dropbear.afg.IdleTimeout='600' && uci set dropbear.afg.PasswordAuth='on' && uci set dropbear.afg.RootPasswordAuth='on' && uci set dropbear.afg.RootLogin='1' && (uci set dropbear.lan.enable='0' || true) && uci commit dropbear && /etc/init.d/dropbear enable && /etc/init.d/dropbear restart && (uci -q set $(uci show firewall | grep -m 1 $(fw3 -q print | egrep 'iptables -t filter -A zone_lan_input -p tcp -m tcp --dport 22 -m comment --comment \"!fw3: .+\" -j DROP' | sed -n -e 's/^iptables.\+fw3: \(.\+\)\".\+/\1/p') | sed -n -e \"s/\(.\+\).name='.\+'$/\1/p\").target='ACCEPT' || true) && uci commit firewall && /etc/init.d/firewall reload && uci set button.wps.handler='wps_button_pressed.sh' && uci commit"`
+ 6.  Premere il bottone WPS sul gateway per un secondo, rilasciarlo, ed attendere qualche istante che l'accesso root venga abilitato.   
+ 7. Premere di nuovo WPS per controllare che si accendano i led WPS
+ 8. Login alla shell via SSH all'IP del gateway con utente: root  password: root
+ 9. Esegui: `sed -i -e 's/#//' -e 's#askconsole:.*$#askconsole:/bin/ash#' /etc/inittab`
+ 10. Esegui `find /proc/banktable -type f -print -exec cat {} ';' -exec echo ';'`
+ 11. Se vedi qualcosa tipo
 
     ...
     /proc/banktable/booted
@@ -38,17 +38,46 @@ Versione Firmware AGTOT >= 2.0
     /proc/banktable/active
     <take note of this>
     ...
-Proseguire al punto 18, altrimenti il modem non supporta il dual bank
+Proseguire al punto 12, altrimenti il modem non supporta il dual bank
 
- 18. Dovresti ottenere qualcosa tipo: 
+ 12. Dovresti ottenere qualcosa tipo: 
 
-    /proc/banktable/active bank_1
-    /proc/banktable/activeversion Unknown
-    /proc/banktable/booted bank_2
-    /proc/banktable/bootedversion
-     xx.x.xxxx-...
+```sh
+    /proc/banktable/active         bank_1
+    /proc/banktable/activeversion  Unknown
+    /proc/banktable/booted         bank_2
+    /proc/banktable/bootedversion  xx.x.xxxx-...
+```
 
- 19. Esegui:  `# Ensure two banks match in sizes [ $(grep -c bank_ /proc/mtd) = 2 ] && \ [ "$(grep bank_1 /proc/mtd | cut -d' ' -f2)" = \ "$(grep bank_2 /proc/mtd | cut -d' ' -f2)" ] && { # Clone and verify firmware into bank_2 if applicable [ "$(cat /proc/banktable/booted)" = "bank_1" ] && { mtd -e bank_2 write /dev/$(grep bank_1 /proc/mtd | cut -d: -f1) bank_2 && \ echo Verifying ... && \ [ $(sha256sum /dev/$(grep bank_1 /proc/mtd | cut -d: -f1) /dev/$(grep bank_2 /proc/mtd | cut -d: -f1) | cut -d' ' -f1 | sort -u | wc -l ) -eq 1 ] || \ { echo Clone verification failed, retry; exit; } } # Make a temp copy of overlay for booted firmware cp -rf /overlay/$(cat /proc/banktable/booted) /tmp/bank_overlay_backup # Clean up jffs2 space by removing existing old overlays rm -rf /overlay/* # Use the previously made temp copy as overlay for bank_2 cp -rf /tmp/bank_overlay_backup /overlay/bank_2 # Activate bank_1 echo bank_1 > /proc/banktable/active # Make sure above changes get written to flash sync # Erase firmware in bank_1 mtd erase bank_1; # Emulate system crash to hard reboot echo c > /proc/sysrq-trigger; } # end`
+ 13. Esegui: 
+```sh
+    # Ensure two banks match in sizes
+    [ $(grep -c bank_ /proc/mtd) = 2 ] && \
+    [ "$(grep bank_1 /proc/mtd | cut -d' ' -f2)" = \
+    "$(grep bank_2 /proc/mtd | cut -d' ' -f2)" ] && {
+
+    # Clone and verify firmware into bank_2 if applicable
+    [ "$(cat /proc/banktable/booted)" = "bank_1" ] && {
+    mtd -e bank_2 write /dev/$(grep bank_1 /proc/mtd | cut -d: -f1) bank_2 && \
+    echo Verifying ... && \
+    [ $(sha256sum /dev/$(grep bank_1 /proc/mtd | cut -d: -f1) /dev/$(grep bank_2 /proc/mtd | cut -d: -f1) | cut -d' ' -f1 | sort -u | wc -l ) -eq 1 ] || \
+    { echo Clone verification failed, retry; exit; } }
+    # Make a temp copy of overlay for booted firmware
+    cp -rf /overlay/$(cat /proc/banktable/booted) /tmp/bank_overlay_backup
+    # Clean up jffs2 space by removing existing old overlays
+    rm -rf /overlay/*
+    # Use the previously made temp copy as overlay for bank_2
+    cp -rf /tmp/bank_overlay_backup /overlay/bank_2
+    # Activate bank_1
+    echo bank_1 > /proc/banktable/active
+    # Make sure above changes get written to flash
+    sync
+    # Erase firmware in bank_1
+    mtd erase bank_1;
+    # Emulate system crash to hard reboot
+    echo c > /proc/sysrq-trigger; }
+    # end
+```
 
 Se tutto è andato bene, il modem si arresterà intenzionalmente in modo anomalo. Attendi il riavvio completo.
 Ora dovresti essere nel bank ottimale menzionato in precedenza. A ogni riavvio, il dispositivo tenterà di avviare prima il banco attivo. Poiché abbiamo impostato il banco 1 come attivo e abbiamo anche cancellato il firmware del banco 1, si avvierà dal banco 2.
@@ -58,21 +87,22 @@ Ora dovresti essere nel bank ottimale menzionato in precedenza. A ogni riavvio, 
 
  1.  accedere in SSH con credenziali quelle di default dopo il root, ovvero nome utente: root e password: root
  2. se il comando `cat /proc/banktable/booted` restituisce **bank_1** eseguire il comando `[ "$(cat /proc/banktable/booted)" = "bank_1" ] && mtd write /dev/mtd3 bank_2`
- 3. eseguire 
- `cp -a /overlay/$(cat /proc/banktable/booted) /tmp/bank_overlay_backup`
- `rm -rf /overlay/*`
- `cp -a /tmp/bank_overlay_backup /overlay/bank_2`
-echo bank_1 > /proc/banktable/active  
-sync  
-mtd erase bank_1
+ 3. eseguire:
+    ```sh
+    cp -a /overlay/$(cat /proc/banktable/booted) /tmp/bank_overlay_backup
+    rm -rf /overlay/*
+    cp -a /tmp/bank_overlay_backup /overlay/bank_2
+    echo bank_1 > /proc/banktable/active  
+    sync  
+    mtd erase bank_1
+    ```
+ 4. spegnere e riaccendere manualmente il gateway tramite interruttore
+ 5. controllare che `cat /proc/banktable/booted` restituisca **bank_2**
 
-controllare che `cat /proc/banktable/booted` restituisca **bank_2**
 
 ## 4. Aggiungi rete guest + correzione bug + lingua italiano (vedi https://www.ilpuntotecnico.com/forum/index.php/topic,77981.msg238343.html#msg238343 )
- (E' incluso il bug fix per i toni italiani del VOIP da installare preferibilmente prima della GUI MOD)
 
-Si tratta di un eseguibile editabile secondo le proprie preferenze che permette di :
-
+Possibili opzioni facoltative:
 - Aggiunge la lingua italiana alla GUI (i files della traduzione sono presi in prestito dalla GUI del “buon” e spero sempre eterno Ansuel).
 - Installa SFTP SERVER per l’uso di programmi tipo Filezilla o il File Manager del Desktop di Linux per navigare tra i files e cartelle del router.
 - Installa Nano come editor.
@@ -80,17 +110,29 @@ Si tratta di un eseguibile editabile secondo le proprie preferenze che permette 
 - Risolve lo stato della visualizzazione della rete Guest nella GUI.
 - Risolve i bugs del Voip  Tim e Tiscali (grazie a @cubamito).
  
-Scaricare lo zip allegato e scompattatelo su supporto usb. Editate i file come indicato nel  Readme allegato. Inserite il supporto usb nel router. Entrate con SSH come root e date questo comando:
-sh /tmp/run/mountd/sda1/setup/setup.sh
-La procedura e reversibile sempre seguendo le indicazione del Readme allegato.
+Procedura 
+1. Scaricare lo zip BugFixes.zip
+2. Estrarre la cartella "setup" e copiarla su suppport USB
+3. Editate i file come indicato nel  Readme allegato. 
+4. Inserite il supporto usb nel router. 
+5. Entrate con SSH come root e date questo comando: `sh /tmp/run/mountd/sda1/setup/setup.sh`
 
 
 Con la pennina  usb inserita (NB copiare la cartella setup nella root)
 
-### ABILITA GUEST WIFI
-cp /etc/config/wireless /etc/config/wireless.save & cp /tmp/run/mountd/sda1/setup/wifi/wireless /etc/config/wireless
+### Modalità Router
+#### ABILITA GUEST WIFI
 
-### PERMETTE LA VISUALIZZAZIONE DELLO STATO DEL WIFI GUEST NELLA GUI - FACOLTATICO
+`cp /etc/config/wireless /etc/config/wireless.save & cp /tmp/run/mountd/sda1/setup/wifi/wireless /etc/config/wireless`
 
-cp /www/cards/004_wireless.lp /www/cards/004_wireless.lp.save & cp /tmp/run/mountd/sda1/setup/wifi/004_wireless.lp /www/cards/ & /etc/init.d/nginx restart
+#### PERMETTE LA VISUALIZZAZIONE DELLO STATO DEL WIFI GUEST NELLA GUI - FACOTATIVO
 
+`cp /www/cards/004_wireless.lp /www/cards/004_wireless.lp.save & cp /tmp/run/mountd/sda1/setup/wifi/004_wireless.lp /www/cards/ & /etc/init.d/nginx restart`
+
+### Modalità AP
+#### ABILITA GUEST WIFI
+
+Utilizzare il file  "wireless.apMode"
+
+#### PERMETTE LA VISUALIZZAZIONE DELLO STATO DEL WIFI GUEST NELLA GUI - FACOTATIVO
+ToDo
