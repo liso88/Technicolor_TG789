@@ -139,3 +139,9 @@ Utilizzare il file  "wireless.apMode"
 
 #### PERMETTE LA VISUALIZZAZIONE DELLO STATO DEL WIFI GUEST NELLA GUI - FACOTATIVO
 ToDo
+
+
+## 5. Consigli
+- installare il supporto per sftp server: ```sh opkg install /tmp/run/mountd/sda1/setup/sftp/openssh-sftp-server_7.1p2-1_brcm63xx-tch.ipk ``
+- Utilizzare FileZilla per spostare e rinominare il file "wireless.apMode" in "wireless"
+
