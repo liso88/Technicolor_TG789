@@ -7,7 +7,14 @@ Sintesi della guida presente qui: https://www.ilpuntotecnico.com/forum/index.php
  ## 1. Sbloccare il modem
 Versione Firmware AGTOT < 2.0
 
- - CONSIGLIATO: aggiornamento fw da linea TIM e poi segui le istruzioni per AGTOT >= 2.0.0
+ - CONSIGLIATO: aggiornamento fw da linea TIM e poi segui le istruzioni per AGTOT >= 2.0.0.
+   1. Collegare il gateway ad una linea TIM attiva. Questo può essere fatto sia utilizzando il Gateway come modem, oppure collegarlo attraverso un'altro modem. Per fare questo collegare il Gateway utilizzando una delle porte LAN (quelle gialle)
+   2. Staccare il cavo DSL (se utilizzato come modem)
+   3. Effettuare un reset-to-factory-default dalla GUI o tramite pin button
+   4. attendere che il modem si riaccenda
+   5. Accedere alla GUI con le credenziali admin/admin
+   6. Sulla homepage della GUI cliccare sulla sezione “sblocco modem”
+     
  - sblocco seguendo la guida https://www.ilpuntotecnico.com/forum/index.php/topic,77981.msg261767.html#msg261767
 
 Versione Firmware AGTOT >= 2.0
