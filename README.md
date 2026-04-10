@@ -39,7 +39,7 @@ set uci.button.button.@wps.handler "sed -i 's#/root:.*$#/root:/bin/ash#' /etc/pa
  8. Premere di nuovo WPS per controllare che si accendano i led WPS
  9. Login alla shell via SSH all'IP del gateway con utente: root  password: root
  10. Esegui: `sed -i -e 's/#//' -e 's#askconsole:.*$#askconsole:/bin/ash#' /etc/inittab`
- 11. Esegui `find /proc/banktable -type f -print -exec cat {} ';' -exec echo ';'''
+ 11. Esegui `find /proc/banktable -type f -print -exec cat {} ';' -exec echo ';'`
  12. Se vedi qualcosa tipo
 
     ...
@@ -148,7 +148,27 @@ cp /www/cards/004_wireless.lp /www/cards/004_wireless.lp.save & cp /tmp/run/moun
 
 #### Visualizzazione delle rete Guest nel pannello
 - ToDo. Attulamente non funziona
+- 
+#### Cambia WAN da PPPoE a DHCP
+```sh
+uci set network.wan.proto='dhcp'
+```
+Rimuovi le opzioni PPPoE non necessarie
 
+```sh
+uci delete network.wan.keepalive
+uci delete network.wan.vendorid
+uci delete network.wan.graceful_restart
+uci delete network.wan.authfail
+uci delete network.wan.release
+uci delete network.wan.iface6rd
+```
+Salva e applica
+```sh
+uci commit network
+ifdown wan
+ifup wan
+```
 
 ## 5. Consigli
 - installare il supporto per sftp server: `opkg install /tmp/run/mountd/sda1/setup/sftp/openssh-sftp-server_7.1p2-1_brcm63xx-tch.ipk `
