@@ -7,7 +7,14 @@ Sintesi della guida presente qui: https://www.ilpuntotecnico.com/forum/index.php
  ## 1. Sbloccare il modem
 Versione Firmware AGTOT < 2.0
 
- - CONSIGLIATO: aggiornamento fw da linea TIM e poi segui le istruzioni per AGTOT >= 2.0.0
+ - CONSIGLIATO: aggiornamento fw da linea TIM e poi segui le istruzioni per AGTOT >= 2.0.0.
+   1. Collegare il gateway ad una linea TIM attiva. Questo può essere fatto sia utilizzando il Gateway come modem, oppure collegarlo attraverso un'altro modem. Per fare questo collegare il Gateway utilizzando una delle porte LAN (quelle gialle)
+   2. Staccare il cavo DSL (se utilizzato come modem)
+   3. Effettuare un reset-to-factory-default dalla GUI o tramite pin button
+   4. attendere che il modem si riaccenda
+   5. Accedere alla GUI con le credenziali admin/admin
+   6. Sulla homepage della GUI cliccare sulla sezione “sblocco modem”
+     
  - sblocco seguendo la guida https://www.ilpuntotecnico.com/forum/index.php/topic,77981.msg261767.html#msg261767
 
 Versione Firmware AGTOT >= 2.0
@@ -26,13 +33,13 @@ Versione Firmware AGTOT >= 2.0
  4. Accedere al modem tramite *ssh* con utente: **engineer** e password: **ACCESS KEY**  
  5. Eseguire il comando 
    ```sh
-set uci.button.button.@wps.handler "sed -i 's#/root:.*$#/root:/bin/ash#' /etc/passwd && echo root:root | chpasswd && sed -i -e 's/#//' -e 's#askconsole:.*\$#askconsole:/bin/ash#' /etc/inittab && (uci -q delete dropbear.afg || true) && uci add dropbear dropbear && uci rename dropbear.@dropbear[-1]=afg && uci set dropbear.afg.enable='1' && uci set dropbear.afg.Interface='lan' && uci set dropbear.afg.Port='22' && uci set dropbear.afg.IdleTimeout='600' && uci set dropbear.afg.PasswordAuth='on' && uci set dropbear.afg.RootPasswordAuth='on' && uci set dropbear.afg.RootLogin='1' && (uci set dropbear.lan.enable='0' || true) && uci commit dropbear && /etc/init.d/dropbear enable && /etc/init.d/dropbear restart && (uci -q set $(uci show firewall | grep -m 1 $(fw3 -q print | egrep 'iptables -t filter -A zone_lan_input -p tcp -m tcp --dport 22 -m comment --comment \"!fw3: .+\" -j DROP' | sed -n -e 's/^iptables.\+fw3: \(.\+\)\".\+/\1/p') | sed -n -e \"s/\(.\+\).name='.\+'$/\1/p\").target='ACCEPT' || true) && uci commit firewall && /etc/init.d/firewall reload && uci set button.wps.handler='wps_button_pressed.sh' && uci commit"`
+set uci.button.button.@wps.handler "sed -i 's#/root:.*$#/root:/bin/ash#' /etc/passwd && echo root:root | chpasswd && sed -i -e 's/#//' -e 's#askconsole:.*\$#askconsole:/bin/ash#' /etc/inittab && (uci -q delete dropbear.afg || true) && uci add dropbear dropbear && uci rename dropbear.@dropbear[-1]=afg && uci set dropbear.afg.enable='1' && uci set dropbear.afg.Interface='lan' && uci set dropbear.afg.Port='22' && uci set dropbear.afg.IdleTimeout='600' && uci set dropbear.afg.PasswordAuth='on' && uci set dropbear.afg.RootPasswordAuth='on' && uci set dropbear.afg.RootLogin='1' && (uci set dropbear.lan.enable='0' || true) && uci commit dropbear && /etc/init.d/dropbear enable && /etc/init.d/dropbear restart && (uci -q set $(uci show firewall | grep -m 1 $(fw3 -q print | egrep 'iptables -t filter -A zone_lan_input -p tcp -m tcp --dport 22 -m comment --comment \"!fw3: .+\" -j DROP' | sed -n -e 's/^iptables.\+fw3: \(.\+\)\".\+/\1/p') | sed -n -e \"s/\(.\+\).name='.\+'$/\1/p\").target='ACCEPT' || true) && uci commit firewall && /etc/init.d/firewall reload && uci set button.wps.handler='wps_button_pressed.sh' && uci commit"
 ```
  7.  Premere il bottone WPS sul gateway per un secondo, rilasciarlo, ed attendere qualche istante che l'accesso root venga abilitato.   
  8. Premere di nuovo WPS per controllare che si accendano i led WPS
  9. Login alla shell via SSH all'IP del gateway con utente: root  password: root
  10. Esegui: `sed -i -e 's/#//' -e 's#askconsole:.*$#askconsole:/bin/ash#' /etc/inittab`
- 11. Esegui `find /proc/banktable -type f -print -exec cat {} ';' -exec echo ';'''
+ 11. Esegui `find /proc/banktable -type f -print -exec cat {} ';' -exec echo ';'`
  12. Se vedi qualcosa tipo
 
     ...
@@ -141,7 +148,27 @@ cp /www/cards/004_wireless.lp /www/cards/004_wireless.lp.save & cp /tmp/run/moun
 
 #### Visualizzazione delle rete Guest nel pannello
 - ToDo. Attulamente non funziona
+- 
+#### Cambia WAN da PPPoE a DHCP
+```sh
+uci set network.wan.proto='dhcp'
+```
+Rimuovi le opzioni PPPoE non necessarie
 
+```sh
+uci delete network.wan.keepalive
+uci delete network.wan.vendorid
+uci delete network.wan.graceful_restart
+uci delete network.wan.authfail
+uci delete network.wan.release
+uci delete network.wan.iface6rd
+```
+Salva e applica
+```sh
+uci commit network
+ifdown wan
+ifup wan
+```
 
 ## 5. Consigli
 - installare il supporto per sftp server: `opkg install /tmp/run/mountd/sda1/setup/sftp/openssh-sftp-server_7.1p2-1_brcm63xx-tch.ipk `
