@@ -170,6 +170,19 @@ ifdown wan
 ifup wan
 ```
 
+#### Cambia WAN da PPPoE a Static
+```sh
+uci set network.wan.proto='static'
+uci set network.wan.ipaddr='192.168.1.50'
+uci set network.wan.netmask='255.255.255.0'
+uci set network.wan.gateway='192.168.1.1'
+uci set network.wan.dns='192.168.1.1'
+```
+Salva e applica
+```sh
+uci commit network
+/etc/init.d/network restart
+```
 ## 5. Consigli
 - installare il supporto per sftp server: `opkg install /tmp/run/mountd/sda1/setup/sftp/openssh-sftp-server_7.1p2-1_brcm63xx-tch.ipk `
 - Utilizzare FileZilla per spostare e rinominare i file
