@@ -200,8 +200,8 @@ cat /etc/firewall.user
 
 iptables -D zone_guest_forward -i br-guest -o br-lan -j ACCEPT
 iptables -I zone_guest_forward 1 -i br-guest -o br-lan -d 192.168.1.1 -j ACCEPT
-iptables -I zone_guest_forward 2 -i br-guest -o br-lan -d 192.168.1.0/24 -j DROP
-
+iptables -I zone_guest_forward 2 -i br-guest -o br-lan -d 192.168.1.0/24 -j REJECT
+iptables -I zone_guest_forward 3 -i br-guest -o br-lan -j ACCEPT
 #### Verifica
 
 Controlla che il gateway sia presente:
