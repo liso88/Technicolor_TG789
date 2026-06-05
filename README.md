@@ -156,14 +156,7 @@ Internet → Router principale (192.168.1.1)
 
 > Il TG789 è collegato tramite **porta LAN** al router principale. La porta WAN resta inutilizzata.
 
----
 
-#### Comandi da eseguire via SSH
-
-Collegati al TG789:
-```bash
-ssh root@192.168.1.18
-```
 
 #### 1. Gateway e DNS sulla LAN
 
@@ -203,8 +196,11 @@ cat /etc/firewall.user
 ```bash
 /etc/init.d/firewall restart
 ```
+#### 6. Isola la guest
 
----
+iptables -D zone_guest_forward -i br-guest -o br-lan -j ACCEPT
+iptables -I zone_guest_forward 1 -i br-guest -o br-lan -d 192.168.1.1 -j ACCEPT
+iptables -I zone_guest_forward 2 -i br-guest -o br-lan -d 192.168.1.0/24 -j DROP
 
 #### Verifica
 
@@ -219,8 +215,6 @@ Controlla che il NAT sia attivo:
 iptables -t nat -L POSTROUTING -n -v
 # deve apparire la regola MASQUERADE per 192.168.168.0/25
 ```
-
----
 
 #### Note
 
