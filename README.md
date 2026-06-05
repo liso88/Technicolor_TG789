@@ -141,6 +141,97 @@ Con la pennina  usb inserita (NB copiare la cartella setup nella root)
 cp /www/cards/004_wireless.lp /www/cards/004_wireless.lp.save & cp /tmp/run/mountd/sda1/setup/wifi/004_wireless.lp /www/cards/ & /etc/init.d/nginx restart
 ```
 
+
+
+Guida per ripristinare la configurazione dopo un reset del modem, usato come **access point con rete guest isolata** dietro a un router principale.
+
+#### Schema di rete con GUEST
+
+```
+Internet → Router principale (192.168.1.1)
+                └── [porta LAN] → TG789 (192.168.1.18)
+                                      ├── WiFi normale
+                                      └── WiFi guest (192.168.168.0/25)
+```
+
+> Il TG789 è collegato tramite **porta LAN** al router principale. La porta WAN resta inutilizzata.
+
+---
+
+#### Comandi da eseguire via SSH
+
+Collegati al TG789:
+```bash
+ssh root@192.168.1.18
+```
+
+#### 1. Gateway e DNS sulla LAN
+
+```bash
+uci set network.lan.gateway='192.168.1.1'
+uci set network.lan.dns='192.168.1.1'
+uci commit network
+/etc/init.d/network restart
+```
+
+#### 2. Forwarding guest → LAN
+
+```bash
+iptables -I zone_guest_forward 1 -i br-guest -o br-lan -j ACCEPT
+```
+
+#### 3. NAT per la rete guest
+
+```bash
+iptables -t nat -I POSTROUTING 1 -s 192.168.168.0/25 -o br-lan -j MASQUERADE
+```
+
+#### 4. Rendi persistenti le regole iptables
+
+```bash
+echo "iptables -t nat -I POSTROUTING 1 -s 192.168.168.0/25 -o br-lan -j MASQUERADE" >> /etc/firewall.user
+echo "iptables -I zone_guest_forward 1 -i br-guest -o br-lan -j ACCEPT" >> /etc/firewall.user
+```
+
+Verifica che il file sia corretto:
+```bash
+cat /etc/firewall.user
+```
+
+#### 5. Riavvia il firewall
+
+```bash
+/etc/init.d/firewall restart
+```
+
+---
+
+#### Verifica
+
+Controlla che il gateway sia presente:
+```bash
+ip route show
+# deve apparire: default via 192.168.1.1 dev br-lan
+```
+
+Controlla che il NAT sia attivo:
+```bash
+iptables -t nat -L POSTROUTING -n -v
+# deve apparire la regola MASQUERADE per 192.168.168.0/25
+```
+
+---
+
+#### Note
+
+- L'IP del TG789 sulla LAN è `192.168.1.18` — accedi alla GUI da `http://192.168.1.18`
+- La rete guest usa il range `192.168.168.0/25`
+- I dispositivi guest sono isolati dalla rete principale ma navigano su internet tramite il router principale
+
+
+
+
+
 ### Modalità AP
 
 #### Abilita Guest Wifi
